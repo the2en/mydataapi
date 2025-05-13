@@ -19,8 +19,7 @@ import javax.sql.DataSource;
 
 @Slf4j
 @Configuration
-//@MapperScan(basePackages = {"com.idlelife.myasset.repository"}, annotationClass = org.apache.ibatis.annotations.Mapper.class)
-@MapperScan(value = {"com.albee.mydataapi.api.*.*.repository"})
+@MapperScan(value = { "com.albee.mydataapi.api.*.*.repository" })
 public class DataSourceConfig {
 
     @Autowired
@@ -28,17 +27,8 @@ public class DataSourceConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource")
-    public HikariConfig hikariConfig() {
-        // application.yml 에 있는 spring.datasource 를 읽어 HikariConfig에 관련된 설정을 해준다.
-
-        return new HikariConfig();
-    }
-
-    @Bean
     public DataSource dataSource() {
-        // hikariConfig를 기반으로 datasource 를 만들어 준다.
-        DataSource dataSource = new HikariDataSource(hikariConfig());
-        return dataSource;
+        return new HikariDataSource();
     }
 
     @Bean
@@ -49,7 +39,6 @@ public class DataSourceConfig {
         sqlSessionFactoryBean.setConfigLocation(applicationContext.getResource("classpath:mybatis-config.xml"));
         sqlSessionFactoryBean.setTypeAliasesPackage("com.albee.mydataapi");
         sqlSessionFactoryBean.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
-
         return sqlSessionFactoryBean.getObject();
     }
 
@@ -57,6 +46,4 @@ public class DataSourceConfig {
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
-
-
 }
